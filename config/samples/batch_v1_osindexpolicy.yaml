@@ -1,0 +1,9 @@
+apiVersion: batch.a8uhnf.com/v1
+kind: OSIndexPolicy
+metadata:
+  labels:
+    app.kubernetes.io/name: opensearch-ism-crd
+    app.kubernetes.io/managed-by: kustomize
+  name: osindexpolicy-sample
+spec:
+  # TODO(user): Add fields here

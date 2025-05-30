@@ -8,4 +8,14 @@ layout:
 - go.kubebuilder.io/v4
 projectName: opensearch-ism-crd
 repo: github.com/a8uhnf/opensearch-ism-crd
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: a8uhnf.com
+  group: batch
+  kind: OSIndexPolicy
+  path: github.com/a8uhnf/opensearch-ism-crd/api/v1
+  version: v1
 version: "3"
