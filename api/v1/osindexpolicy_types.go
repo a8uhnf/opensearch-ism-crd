@@ -17,6 +17,8 @@ limitations under the License.
 package v1
 
 import (
+	"time"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -29,7 +31,30 @@ type OSIndexPolicySpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Target Opensearch
-	Foo string `json:"foo,omitempty"`
+	Target string `json:"target,omitempty"`
+}
+
+// OpensearchIndexPolicy define the desired state of Opensearch Index ISM policy
+type OpensearchIndexPolicy struct {
+	PolicyID          string            `json:"policy_id,omitempty"`
+	Description       string            `json:"description,omitempty"`
+	LastUpdatedTime   time.Time         `json:"last_updated_time,omitempty"`
+	ErrorNotification map[string]string `json:"error_notification,omitempty"`
+	DefaultState      string            `json:"default_state,omitempty"`
+	States            []State           `json:"states,omitempty"`
+}
+
+type ISMTemplate struct {
+	IndexPatterns []string `json:"index_patterns,omitempty"`
+	Priority      int      `json:"priority,omitempty"`
+}
+
+type State struct {
+	Name    string   `json:"name,omitempty"`
+	Actions []Action `json:"actions,omitempty"`
+}
+
+type Action struct {
 }
 
 // OSIndexPolicyStatus defines the observed state of OSIndexPolicy.
