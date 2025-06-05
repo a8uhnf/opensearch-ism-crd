@@ -7,3 +7,9 @@ metadata:
   name: osindexpolicy-sample
 spec:
   # TODO(user): Add fields here
+  opensearch_connection:
+    host: "opensearch.default.svc.cluster.local"
+    port: 9200
+    scheme: "https"
+    # username: "admin"
+    # password: "admin_password"

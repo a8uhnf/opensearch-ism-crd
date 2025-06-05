@@ -17,8 +17,6 @@ limitations under the License.
 package v1
 
 import (
-	"time"
-
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -31,14 +29,27 @@ type OSIndexPolicySpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Target Opensearch
-	Target string `json:"target,omitempty"`
+	OpensearhConnection OpensearhConnection `json:"opensearch_connection,omitempty"`
+	// IndexPolicy defines the ISM policy for the index
+	IndexPolicy OpensearchIndexPolicy `json:"index_policy,omitempty"`
+	// ISMTemplate defines the template for the index
+	ISMTemplate ISMTemplate `json:"ism_template,omitempty"`
+}
+
+type OpensearhConnection struct {
+	// URL of the Opensearch instance
+	URL string `json:"url,omitempty"`
+	// Username for authentication
+	Username string `json:"username,omitempty"`
+	// Password for authentication
+	Password string `json:"password,omitempty"`
 }
 
 // OpensearchIndexPolicy define the desired state of Opensearch Index ISM policy
 type OpensearchIndexPolicy struct {
-	PolicyID          string            `json:"policy_id,omitempty"`
-	Description       string            `json:"description,omitempty"`
-	LastUpdatedTime   time.Time         `json:"last_updated_time,omitempty"`
+	PolicyID    string `json:"policy_id,omitempty"`
+	Description string `json:"description,omitempty"`
+	// LastUpdatedTime   time.Time         `json:"last_updated_time,omitempty"`
 	ErrorNotification map[string]string `json:"error_notification,omitempty"`
 	DefaultState      string            `json:"default_state,omitempty"`
 	States            []State           `json:"states,omitempty"`
@@ -49,9 +60,22 @@ type ISMTemplate struct {
 	Priority      int      `json:"priority,omitempty"`
 }
 
+// State defines a state in the ISM policy
+// It includes the name of the state, the actions to be performed in this state,
+// and the transitions to other states
 type State struct {
-	Name    string   `json:"name,omitempty"`
-	Actions []Action `json:"actions,omitempty"`
+	Name        string       `json:"name,omitempty"`
+	Actions     []Action     `json:"actions,omitempty"`
+	Transitions []Transition `json:"transitions,omitempty"`
+}
+
+// Transition defines the transition from one state to another
+// It includes the state name to transition to and the conditions that must be met for the transition to occur
+type Transition struct {
+	// StateName is the name of the state to transition to
+	StateName string `json:"state_name,omitempty"`
+	// Conditions are the conditions that must be met for the transition to occur
+	Conditions map[string]string `json:"conditions,omitempty"`
 }
 
 type Action struct {

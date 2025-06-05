@@ -39,9 +39,77 @@ spec:
           spec:
             description: OSIndexPolicySpec defines the desired state of OSIndexPolicy.
             properties:
-              target:
+              index_policy:
+                description: IndexPolicy defines the ISM policy for the index
+                properties:
+                  default_state:
+                    type: string
+                  description:
+                    type: string
+                  error_notification:
+                    additionalProperties:
+                      type: string
+                    description: LastUpdatedTime   time.Time         `json:"last_updated_time,omitempty"`
+                    type: object
+                  policy_id:
+                    type: string
+                  states:
+                    items:
+                      description: |-
+                        State defines a state in the ISM policy
+                        It includes the name of the state, the actions to be performed in this state,
+                        and the transitions to other states
+                      properties:
+                        actions:
+                          items:
+                            type: object
+                          type: array
+                        name:
+                          type: string
+                        transitions:
+                          items:
+                            description: |-
+                              Transition defines the transition from one state to another
+                              It includes the state name to transition to and the conditions that must be met for the transition to occur
+                            properties:
+                              conditions:
+                                additionalProperties:
+                                  type: string
+                                description: Conditions are the conditions that must
+                                  be met for the transition to occur
+                                type: object
+                              state_name:
+                                description: StateName is the name of the state to
+                                  transition to
+                                type: string
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                type: object
+              ism_template:
+                description: ISMTemplate defines the template for the index
+                properties:
+                  index_patterns:
+                    items:
+                      type: string
+                    type: array
+                  priority:
+                    type: integer
+                type: object
+              opensearch_connection:
                 description: Target Opensearch
-                type: string
+                properties:
+                  password:
+                    description: Password for authentication
+                    type: string
+                  url:
+                    description: URL of the Opensearch instance
+                    type: string
+                  username:
+                    description: Username for authentication
+                    type: string
+                type: object
             type: object
           status:
             description: OSIndexPolicyStatus defines the observed state of OSIndexPolicy.
