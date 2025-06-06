@@ -39,6 +39,7 @@ import (
 
 	batchv1 "github.com/a8uhnf/opensearch-ism-crd/api/v1"
 	"github.com/a8uhnf/opensearch-ism-crd/internal/controller"
+	webhookv1 "github.com/a8uhnf/opensearch-ism-crd/internal/webhook/v1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -208,6 +209,13 @@ func main() {
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "OSIndexPolicy")
 		os.Exit(1)
+	}
+	// nolint:goconst
+	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
+		if err := webhookv1.SetupOSIndexPolicyWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "OSIndexPolicy")
+			os.Exit(1)
+		}
 	}
 	// +kubebuilder:scaffold:builder
 

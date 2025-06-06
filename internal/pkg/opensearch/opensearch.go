@@ -37,5 +37,6 @@ func NewOpenSearchClient(ctx context.Context, config OpenSearchConfig) (OpenSear
 	}
 	return &openSearchClient{
 		client: oCli,
+		url:    config.URL,
 	}, nil
 }

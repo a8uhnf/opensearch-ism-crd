@@ -22,6 +22,7 @@ import (
 	"fmt"
 	batchv1 "github.com/a8uhnf/opensearch-ism-crd/api/v1"
 	"github.com/a8uhnf/opensearch-ism-crd/internal/pkg/opensearch"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"net/http"
@@ -88,9 +89,38 @@ func (r *OSIndexPolicyReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 	if err != nil {
 		logr.Error(err, "Failed to create OpenSearch client")
 		// If the OpenSearch client cannot be created, return an error to requeue the request.
-		return ctrl.Result{}, err
+		return ctrl.Result{
+			RequeueAfter: 30 * 1000000000, // Requeue after 30 seconds
+		}, err
 	}
-	fmt.Println("OpenSearch client created successfully", opensearchClient)
+
+	policy, err := opensearchClient.GetIndexPolicy(ctx, osIndexPolicy.Spec.PolicyID)
+
+	if errors.IsNotFound(err) {
+		logr.Error(err, "Index policy not found in OpenSearch, creating new policy", "policyName", osIndexPolicy.Name)
+
+		if err := opensearchClient.CreateIndexPolicy(ctx, osIndexPolicy.Spec.PolicyID, &osIndexPolicy.Spec.Policy); err != nil {
+			logr.Error(err, "Failed to create index policy in OpenSearch", "policyName", osIndexPolicy.Name)
+			// If the index policy cannot be created, return an error to requeue the request.
+			return ctrl.Result{
+				RequeueAfter: 30 * 1000000000, // Requeue after 30 seconds
+			}, err
+		}
+		logr.Info("Index policy created successfully in OpenSearch", "policyName", osIndexPolicy.Name)
+
+		return ctrl.Result{
+			RequeueAfter: 30 * 1000000000, // Requeue after 30 seconds
+		}, nil
+	}
+
+	if err != nil {
+		logr.Error(err, "Failed to retrieve index policy from OpenSearch")
+		return ctrl.Result{
+			RequeueAfter: 30 * 1000000000, // Requeue after 30 seconds
+		}, err
+	}
+
+	fmt.Println(policy)
 
 	// Here you would add your logic to handle the OSIndexPolicy.
 	logr.Info("Successfully reconciled OSIndexPolicy", "name", osIndexPolicy.Name, "namespace", osIndexPolicy.Namespace)
@@ -106,13 +136,7 @@ func (r *OSIndexPolicyReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 	// If you want to requeue the request immediately, you can return ctrl.Result{Requeue: true}.
 	// If you want to stop requeuing, return ctrl.Result{}.
 	logr.Info("OSIndexPolicy reconciled successfully", "name", osIndexPolicy.Name)
-	// Return a result indicating that the reconciliation is complete and no immediate requeue is needed.
-	// If you want to requeue the request after a certain duration, you can set RequeueAfter.
-	// For example, to requeue after 30 seconds:
-	// return ctrl.Result{RequeueAfter: 30 * time.Second}, nil
-	// If you want to requeue the request immediately, you can return ctrl.Result{Requeue: true}.
-	// If you want to stop requeuing, return ctrl.Result{}.
-	logr.Info("Reconciliation complete for OSIndexPolicy", "name", osIndexPolicy.Name)
+
 	// Returning a result to requeue the request after 30 seconds.
 	logr.Info("Requeuing OSIndexPolicy reconciliation after 30 seconds", "name", osIndexPolicy.Name)
 

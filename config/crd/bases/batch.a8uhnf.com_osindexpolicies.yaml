@@ -39,7 +39,20 @@ spec:
           spec:
             description: OSIndexPolicySpec defines the desired state of OSIndexPolicy.
             properties:
-              index_policy:
+              opensearch_connection:
+                description: Target Opensearch
+                properties:
+                  password:
+                    description: Password for authentication
+                    type: string
+                  url:
+                    description: URL of the Opensearch instance
+                    type: string
+                  username:
+                    description: Username for authentication
+                    type: string
+                type: object
+              policy:
                 description: IndexPolicy defines the ISM policy for the index
                 properties:
                   default_state:
@@ -51,8 +64,16 @@ spec:
                       type: string
                     description: LastUpdatedTime   time.Time         `json:"last_updated_time,omitempty"`
                     type: object
-                  policy_id:
-                    type: string
+                  ism_template:
+                    description: ISMTemplate defines the template for the index
+                    properties:
+                      index_patterns:
+                        items:
+                          type: string
+                        type: array
+                      priority:
+                        type: integer
+                    type: object
                   states:
                     items:
                       description: |-
@@ -62,6 +83,102 @@ spec:
                       properties:
                         actions:
                           items:
+                            properties:
+                              allocation:
+                                description: AllocationAction defines the action to
+                                  set the index allocation
+                                type: object
+                              close:
+                                description: CloseAction defines the action to close
+                                  the index
+                                type: object
+                              convert_index_to_remote:
+                                description: ConvertIndexToRemoteAction defines the
+                                  action to convert the index to removed state
+                                type: object
+                              delete:
+                                description: DeleteAction defines the action to delete
+                                  the index
+                                type: object
+                              force_merge:
+                                description: ForceMergeAction defines the action to
+                                  force merge the index
+                                properties:
+                                  force_merge:
+                                    properties:
+                                      max_num_segments:
+                                        description: MaxNumSegments is the maximum
+                                          number of segments to merge into
+                                        type: integer
+                                      task_execution_timeout:
+                                        type: string
+                                      wait_for_completion:
+                                        type: boolean
+                                    type: object
+                                type: object
+                              index_priority:
+                                description: IndexPriorityAction defines the action
+                                  to set the index priority
+                                type: object
+                              notification:
+                                description: NotificationAction defines the action
+                                  to notify about the index state
+                                type: object
+                              open:
+                                description: OpenAction defines the action to open
+                                  the index
+                                type: object
+                              read_only:
+                                description: ReadOnlyAction defines the action to
+                                  make the index read-only
+                                type: object
+                              read_write:
+                                description: ReadWriteAction defines the action to
+                                  make the index read-write
+                                type: object
+                              replica_count:
+                                description: ReplicaCountAction defines the action
+                                  to set the number of replicas for the index
+                                properties:
+                                  number_of_replicas:
+                                    type: integer
+                                type: object
+                              rollover:
+                                description: RollOverAction defines the action to
+                                  roll over the index
+                                properties:
+                                  copy_alias:
+                                    type: boolean
+                                  min_doc_count:
+                                    type: integer
+                                  min_index_age:
+                                    type: string
+                                  min_primary_shard_size:
+                                    type: string
+                                  min_size:
+                                    type: string
+                                type: object
+                              rollup:
+                                description: RollupAction defines the action to roll
+                                  up the index
+                                type: object
+                              shrink:
+                                description: ShrinkAction defines the action to shrink
+                                  the index
+                                type: object
+                              snapshot:
+                                description: SnapshotAction defines the action to
+                                  take a snapshot of the index
+                                properties:
+                                  repository:
+                                    type: string
+                                  snapshot:
+                                    type: string
+                                type: object
+                              stop_replication:
+                                description: StopReplicationAction defines the action
+                                  to stop replication of the index
+                                type: object
                             type: object
                           type: array
                         name:
@@ -87,29 +204,10 @@ spec:
                       type: object
                     type: array
                 type: object
-              ism_template:
-                description: ISMTemplate defines the template for the index
-                properties:
-                  index_patterns:
-                    items:
-                      type: string
-                    type: array
-                  priority:
-                    type: integer
-                type: object
-              opensearch_connection:
-                description: Target Opensearch
-                properties:
-                  password:
-                    description: Password for authentication
-                    type: string
-                  url:
-                    description: URL of the Opensearch instance
-                    type: string
-                  username:
-                    description: Username for authentication
-                    type: string
-                type: object
+              policy_id:
+                description: PolicyID is the unique identifier for the Opensearch
+                  Index ISM policy
+                type: string
             type: object
           status:
             description: OSIndexPolicyStatus defines the observed state of OSIndexPolicy.
