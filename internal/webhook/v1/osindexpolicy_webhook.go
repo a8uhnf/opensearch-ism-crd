@@ -138,8 +138,6 @@ func (v *OSIndexPolicyCustomValidator) ValidateDelete(ctx context.Context, obj r
 
 	opensearchClient, err := opensearch.NewOpenSearchClient(ctx, opensearch.OpenSearchConfig{
 		URL:      osindexpolicy.Spec.OpensearhConnection.URL,      // Use the URL from the request spec
-		Username: osindexpolicy.Spec.OpensearhConnection.Username, // Use the username from the request spec
-		Password: osindexpolicy.Spec.OpensearhConnection.Password, // Use the password from the request spec
 		TLSConfig: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true, // Set to true for testing purposes, should be false in production
@@ -147,7 +145,7 @@ func (v *OSIndexPolicyCustomValidator) ValidateDelete(ctx context.Context, obj r
 		},
 	})
 
-	opensearchClient.DeleteIndexPolicy(ctx, osindexpolicy.Spec.PolicyID)
+	err = opensearchClient.DeleteIndexPolicy(ctx, osindexpolicy.Spec.PolicyID)
 	if err != nil {
 		osindexpolicylog.Error(err, "Failed to delete index policy in OpenSearch", "policyName", osindexpolicy.Spec.PolicyID)
 		// If the index policy cannot be deleted, return an error to requeue the request.

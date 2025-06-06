@@ -7,13 +7,13 @@ metadata:
   name: osindexpolicy-sample
 spec:
   # TODO(user): Add fields here
-  policy_id: "sample-index-policy-x-19"
+  policy_id: "sample-index-policy-x"
   policy:
     description: "Sample index policy for OpenSearch"
     default_state: "hot"
     ism_template:
       index_patterns:
-        - "sample1-index-xyz*"
+        - "sample-index-policy-x-*"
       priority: 100
     states:
       - name: "hot"
@@ -25,7 +25,7 @@ spec:
         actions:
           - delete: {}
   opensearch_connection:
-    url: "http://localhost:9200"
+    url: "http://opensearch.default:9200"
     
     
     # username: "admin"
