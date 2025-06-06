@@ -1,8 +1,20 @@
 # opensearch-ism-crd
-// TODO(user): Add simple overview of use/purpose
+
+`OSIndexPolicy` is kubernetes based CRD, which used to poparate OpenSearchIndex policy smoothely into OpenSearch Cluster
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+
+There are two main part of this CRD 
+
+- CRD Controller
+- Webhooks [validation/mutation]
+
+#### Controller:
+It's always look after into CRD `OSIndexPolicy` and make sure necessary state of the CRD is maintained. 
+
+#### Webhooks
+When ever we do some changes into our CRD object definition it got trigger and make necessary changes to the ISM Policy or do validation
+
 
 ## Getting Started
 
